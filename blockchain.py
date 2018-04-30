@@ -5,7 +5,7 @@ from time import time
 
 class Blockchain:
 
-    def __init__(self):
+    def __init__(self, difficulty_sequence='000'):
         self.chain = []
         self.current_transactions = []
 
@@ -68,3 +68,30 @@ class Blockchain:
         :return: <str> The last block of the chain
         """
         return self.chain[-1]
+
+    # Proof-of-Work implementation
+
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        """
+        Validates valid of proof
+        :param last_proof: <int>
+        :param proof: <int>
+        :return: <boolean>
+        """
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+
+        return guess_hash[:4] == '0000'
+
+    def do_proof_of_work(self, last_proof):
+        """
+        Does work while mining is not finished
+        :param last_proof: <int>
+        :return: <int>
+        """
+        proof = 0
+        while self.valid_proof(last_proof=last_proof, proof=proof) is False:
+            proof = proof + 1
+
+        return proof
